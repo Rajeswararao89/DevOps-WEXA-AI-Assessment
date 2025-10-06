@@ -1,0 +1,43 @@
+name: CI - Build & Publish to GHCR
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./nextjs-app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (optional cross-build)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/devops-assignment:${{ github.sha }}
+          docker build --build-arg NEXT_PUBLIC_BUILD_SHA=${{ github.sha }} -t $IMAGE .
+          docker tag $IMAGE ghcr.io/${{ github.repository_owner }}/devops-assignment:latest
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/devops-assignment:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/devops-assignment:latest
+
+      - name: Output
+        run: echo "Pushed: ghcr.io/${{ github.repository_owner }}/devops-assignment:latest"
