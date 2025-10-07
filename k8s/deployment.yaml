@@ -2,40 +2,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nextjs-deployment
-  labels:
-    app: nextjs-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: nextjs-app
+      app: nextjs
   template:
     metadata:
       labels:
-        app: nextjs-app
+        app: nextjs
     spec:
       containers:
       - name: nextjs
-        image: ghcr.io/Rajeswararao89/devops-assignment:latest
-        imagePullPolicy: IfNotPresent
+        image: nextjs-wexa:latest
         ports:
         - containerPort: 3000
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /api/health
             port: 3000
           initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
