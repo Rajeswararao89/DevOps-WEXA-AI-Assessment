@@ -62,7 +62,7 @@ GET /api/health
 
 - 🔐 Authenticate to GitHub Container Registry (GHCR)
 
-- 📦 Push image as ghcr.io/<username>/nextjs-wexa:latest
+- 📦 Push image as ghcr.io/Rajeswararao89/nextjs-wexa:latest
 
 - Workflow file:
 - .github/workflows/ci.yml
